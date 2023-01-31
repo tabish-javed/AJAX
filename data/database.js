@@ -15,7 +15,7 @@ let database
 
 async function connect() {
     const client = await mongodb.MongoClient.connect(uriMongoDB)
-    database = client.db("blogs")
+    database = client.db("blog")
 }
 
 function getDB() {
