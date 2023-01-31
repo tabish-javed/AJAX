@@ -120,7 +120,6 @@ router.get('/posts/:id/comments', async function (req, res) {
         .getDb()
         .collection('comments')
         .find({ postId: postId }).toArray();
-
     res.json(comments)
 });
 
