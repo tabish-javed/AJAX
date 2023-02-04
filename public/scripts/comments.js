@@ -1,5 +1,9 @@
 const loadCommentsBtnElement = document.getElementById("load-comments")
 const commentsSectionElement = document.getElementById("comments")
+const commentsFormElement = document.querySelector("#comments-form form")
+const commentTitleElement = document.getElementById("title")
+const commentTextElement = document.getElementById("text")
+
 
 function createCommentsList(comments) {
     const commentListElement = document.createElement("ul")
@@ -23,9 +27,36 @@ async function fetchCommentsForPost() {
     const response = await fetch(`/posts/${postID}/comments`)
     const responseData = await response.json()
 
-    const commentsListElement = createCommentsList(responseData)
-    commentsSectionElement.innerHTML = ""
-    commentsSectionElement.appendChild(commentsListElement)
+    if (responseData && responseData.length > 0) {
+        const commentsListElement = createCommentsList(responseData)
+        commentsSectionElement.innerHTML = ""
+        commentsSectionElement.appendChild(commentsListElement)
+    } else {
+        commentsSectionElement.firstElementChild.textContent =
+        "We couldn't find any comments, may be add one?"
+    }
 }
 
+async function saveComment(event) {
+    event.preventDefault()
+    const postID = commentsFormElement.dataset.postid
+
+    const enteredTitle = commentTitleElement.value
+    const enteredText = commentTextElement.value
+
+    const comment = { title: enteredTitle, text: enteredText }
+
+    const response = await fetch(`/posts/${postID}/comments`, {
+        method: "POST",
+        body: JSON.stringify(comment),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+
+    fetchCommentsForPost()
+}
+
+
 loadCommentsBtnElement.addEventListener("click", fetchCommentsForPost)
+commentsFormElement.addEventListener("submit", saveComment)

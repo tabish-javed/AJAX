@@ -12,6 +12,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: true })); // Parse incoming request bodies
+app.use(express.json())
 app.use(express.static('public')); // Serve static files (e.g. CSS files)
 
 app.use(blogRoutes);
@@ -26,4 +27,3 @@ app.use(function (error, req, res, next) {
 db.connectToDatabase().then(function () {
   app.listen(3000);
 });
-

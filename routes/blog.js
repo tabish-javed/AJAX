@@ -44,8 +44,7 @@ router.post('/posts', async function (req, res) {
         },
     };
 
-    const result = await db.getDb().collection('posts').insertOne(newPost);
-    console.log(result);
+    await db.getDb().collection('posts').insertOne(newPost);
     res.redirect('/posts');
 });
 
@@ -131,7 +130,7 @@ router.post('/posts/:id/comments', async function (req, res) {
         text: req.body.text,
     };
     await db.getDb().collection('comments').insertOne(newComment);
-    res.redirect('/posts/' + req.params.id);
+    res.json({message: "Comment added!"})
 });
 
 module.exports = router;
