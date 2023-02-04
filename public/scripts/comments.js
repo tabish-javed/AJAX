@@ -24,16 +24,26 @@ function createCommentsList(comments) {
 
 async function fetchCommentsForPost() {
     const postID = loadCommentsBtnElement.dataset.postid
-    const response = await fetch(`/posts/${postID}/comments`)
-    const responseData = await response.json()
 
-    if (responseData && responseData.length > 0) {
-        const commentsListElement = createCommentsList(responseData)
-        commentsSectionElement.innerHTML = ""
-        commentsSectionElement.appendChild(commentsListElement)
-    } else {
-        commentsSectionElement.firstElementChild.textContent =
-        "We couldn't find any comments, may be add one?"
+    try {
+        const response = await fetch(`/posts/${postID}/comments`)
+
+        if (!response.ok) {
+            alert("Fetching comments failed!")
+            return
+        }
+        const responseData = await response.json()
+
+        if (responseData && responseData.length > 0) {
+            const commentsListElement = createCommentsList(responseData)
+            commentsSectionElement.innerHTML = ""
+            commentsSectionElement.appendChild(commentsListElement)
+        } else {
+            commentsSectionElement.firstElementChild.textContent =
+                "We couldn't find any comments, may be add one?"
+        }
+    } catch (error) {
+        alert("Getting comments failed!")
     }
 }
 
@@ -46,15 +56,24 @@ async function saveComment(event) {
 
     const comment = { title: enteredTitle, text: enteredText }
 
-    const response = await fetch(`/posts/${postID}/comments`, {
-        method: "POST",
-        body: JSON.stringify(comment),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
+    try {
+        const response = await fetch(`/posts/${postID}/comments`, {
+            method: "POST",
+            body: JSON.stringify(comment),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
 
-    fetchCommentsForPost()
+        if (response.ok) {
+            fetchCommentsForPost()
+        } else {
+            alert("Can't connect to back-end database, try again later!")
+        }
+
+    } catch (error) {
+        alert("Couldn't send request, try again later!")
+    }
 }
 
 
